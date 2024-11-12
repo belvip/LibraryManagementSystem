@@ -78,6 +78,10 @@ public class LibraryData {
     }
 
     public void addBook(Book book) {
+        /* if (book == null || book.getTitle() == null || book.getTitle().trim().isEmpty()) {
+            throw new IllegalArgumentException("Book title cannot be null or empty.");
+        } */
+
         // Check if the book already exists (by ISBN)
         if (getBookByISBN(book.getISBN()) != null) {
             throw new IllegalArgumentException("Book with ISBN " + book.getISBN() + " already exists.");
@@ -92,6 +96,7 @@ public class LibraryData {
             throw new IllegalArgumentException("No book found with title: " + title);
         }
         bookCollection.remove(book);
+        recentActivities.push("Removed book: " + book.getTitle());
     }
 
     public void removeBookByGenre(String genre) {
@@ -177,7 +182,7 @@ public class LibraryData {
     // Get a book by its title
     public Book getBookByTitle(String title) {
         for (Book book : bookCollection) {
-            if (book.getTitle().equalsIgnoreCase(title)) {
+            if (book.getTitle() != null && book.getTitle().equalsIgnoreCase(title)) {
                 return book;
             }
         }

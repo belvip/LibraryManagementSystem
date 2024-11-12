@@ -5,6 +5,8 @@ import com.belvinard.libraryManagementSystem.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BookService {
 
@@ -15,13 +17,16 @@ public class BookService {
         this.libraryData = libraryData;
     }
 
+
+
     public void addBook(Book book) {
         libraryData.addBook(book);
     }
 
-    public void removeBook(Book book) {
+    /* public void removeBook(Book book) {
         libraryData.removeBook(book);
-    }
+        activityService.logRemoveBookActivity(title);  // Log activity
+    } */
 
     public void updateBook(String isbn, Book updatedBook) {
         libraryData.updateBook(isbn, updatedBook);
@@ -29,6 +34,7 @@ public class BookService {
 
     public void removeBookByTitle(String title) {
         libraryData.removeBookByTitle(title);
+
     }
 
     public Book getBookByTitle(String title) {
@@ -37,5 +43,9 @@ public class BookService {
 
     public Iterable<String> getRecentActivities() {
         return libraryData.getRecentActivities();
+    }
+
+    public List<Book> getAllBooks() {
+        return libraryData.getAllBooks();
     }
 }

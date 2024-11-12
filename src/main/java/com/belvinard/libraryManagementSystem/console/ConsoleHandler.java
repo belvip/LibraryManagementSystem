@@ -1,12 +1,10 @@
 package com.belvinard.libraryManagementSystem.console;
 
-import com.belvinard.libraryManagementSystem.service.BookService;
-import com.belvinard.libraryManagementSystem.service.HistoryService;
-import com.belvinard.libraryManagementSystem.service.SearchService;
-import com.belvinard.libraryManagementSystem.service.SortService;
+import com.belvinard.libraryManagementSystem.service.*;
 import com.belvinard.libraryManagementSystem.model.Book;
 import com.belvinard.libraryManagementSystem.data.LibraryData;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleHandler {
@@ -16,14 +14,18 @@ public class ConsoleHandler {
     private final SearchService searchService;
     private final SortService sortService;
     private final Scanner scanner;
+    private ActivityService activityService;
 
-    public ConsoleHandler(BookService bookService, HistoryService historyService, SearchService searchService, SortService sortService) {
+    public ConsoleHandler(BookService bookService, HistoryService historyService, SearchService searchService, SortService sortService, ActivityService activityService) {
         this.bookService = bookService;
         this.historyService = historyService;
         this.searchService = searchService;
         this.sortService = sortService;
         this.scanner = new Scanner(System.in);
+        this.activityService = activityService;
     }
+
+
 
     public void start() {
         boolean running = true;
@@ -135,14 +137,31 @@ public class ConsoleHandler {
         scanner.nextLine();  // Consume newline
 
         System.out.print("Enter search query: ");
-        String query = scanner.nextLine();
+        String query = scanner.nextLine().trim();
+
+        if (query.isEmpty()) {
+            System.out.println("Please enter a valid search query.");
+            return;
+        }
+
+        // Get the list of books from the BookService
+        List<Book> books = bookService.getAllBooks();
+
+        // Search by author
+        Book foundBook = searchService.linearSearchByAuthor(bookService.getAllBooks(), query);
+
+        if (foundBook != null) {
+            System.out.println("Found book by author: " + foundBook.getTitle());
+        } else {
+            System.out.println("No book found by author: " + query);
+        }
 
         switch (searchChoice) {
             case 1:
                 searchService.linearSearchByTitle(query);
                 break;
             case 2:
-                searchService.linearSearchByAuthor(query);
+                searchService.linearSearchByAuthor(bookService.getAllBooks(), query);
                 break;
             case 3:
                 searchService.linearSearchByISBN(query);
@@ -192,11 +211,25 @@ public class ConsoleHandler {
 
     private void showHistory() {
         System.out.println("\nBorrowing History:");
-        historyService.getHistory().forEach(System.out::println);
+        Iterable<String> history = historyService.getHistory();
+
+        if (!history.iterator().hasNext()) {
+            System.out.println("No borrowing history available.");
+        } else {
+            history.forEach(System.out::println);
+        }
     }
 
     private void showRecentActivities() {
         System.out.println("\nRecent Activities:");
-        bookService.getRecentActivities().forEach(System.out::println);
+        Iterable<String> activities = bookService.getRecentActivities();
+
+        if (!activities.iterator().hasNext()) {
+            System.out.println("No recent activities available.");
+        } else {
+            activities.forEach(System.out::println);
+        }
     }
+
+
 }

@@ -27,14 +27,23 @@ public class SearchService {
         return null;
     }
 
-    public Book linearSearchByAuthor(String author) {
+    public Book linearSearchByAuthor(List<Book> books, String authorQuery) {
+        for (Book book : books) {
+            if (book.getAuthor() != null && book.getAuthor().equalsIgnoreCase(authorQuery)) {
+                return book;  // Book found
+            }
+        }
+        return null;  // No book found
+    }
+
+    /* public Book linearSearchByAuthor(String author) {
         for (Book book : libraryData.getBookCollection()) {
             if (book.getAuthor().equalsIgnoreCase(author)) {
                 return book;
             }
         }
         return null;
-    }
+    } */
 
     public Book linearSearchByISBN(String isbn) {
         for (Book book : libraryData.getBookCollection()) {
@@ -102,4 +111,6 @@ public class SearchService {
         }
         return null;
     }
+
+
 }
